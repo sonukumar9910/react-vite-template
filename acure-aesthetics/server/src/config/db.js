@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-// In-memory database for development
+// In-memory database for development fallback
 const inMemoryDB = {
   blogs: [
     {
@@ -27,15 +28,22 @@ const inMemoryDB = {
 
 const connectDB = async () => {
   try {
-    // For development, we'll use the in-memory database
+    // Always use in-memory database for development
     if (!global.inMemoryDB) {
       global.inMemoryDB = inMemoryDB;
     }
     console.log('Using in-memory database for development');
     
-    // Emit a fake connected event to maintain compatibility
-    mongoose.connection.emit('connected');
+    // Emit a fake connected event to maintain compatibility with mongoose
+    if (!mongoose.connection.readyState) {
+      mongoose.connection.emit('connected');
+    }
     
+    return {
+      connection: {
+        host: 'in-memory-database'
+      }
+    };
   } catch (error) {
     console.error('Database connection error:', error);
     process.exit(1);
