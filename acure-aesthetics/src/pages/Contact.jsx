@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Contact = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -8,17 +10,34 @@ const Contact = () => {
     message: ''
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Form submission logic would go here
-    console.log('Form submitted:', formData)
-    alert('Thank you for your message. We will get back to you soon!')
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: ''
-    })
+    try {
+      const response = await fetch('http://localhost:5000/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: ''
+        })
+        navigate('/thankyou')
+      } else {
+        alert('Error sending message. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Error sending message. Please try again.')
+    }
   }
 
   const handleChange = (e) => {
