@@ -8,6 +8,7 @@ const connectDB = require('./src/config/db');
 const errorHandler = require('./src/middleware/errorHandler');
 const blogRoutes = require('./src/routes/blogRoutes');
 const bookingRoutes = require('./src/routes/bookingRoutes');
+const contactRoutes = require('./src/routes/contactRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/blogs', blogRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/contacts', contactRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {
